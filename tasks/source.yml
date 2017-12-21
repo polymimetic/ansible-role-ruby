@@ -1,0 +1,52 @@
+---
+# Install Ruby via source tarball
+
+- name: Install packages required to build ruby
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - build-essential
+    - zlib1g-dev
+    - libssl-dev
+    - libyaml-dev
+    - libreadline6-dev
+    - libncurses5-dev
+    - libffi-dev
+    - libgdbm3
+    - libgdbm-dev
+
+- name: Download ruby tarball
+  get_url:
+    url: "http://cache.ruby-lang.org/pub/ruby/{{ ruby_version | truncate(3,True,'',0) }}/ruby-{{ ruby_version }}.tar.gz"
+    dest: "/tmp/ruby-{{ ruby_version }}.tar.gz"
+
+- name: Unpack Ruby tarball
+  unarchive:
+    src: "/tmp/ruby-{{ ruby_version }}.tar.gz"
+    dest: "{{ ruby_workspace }}/"
+    copy: no
+
+- name: Build Ruby
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ruby_workspace }}/ruby-{{ ruby_version }}"
+    creates: /usr/local/bin/ruby
+  with_items:
+    - ./configure --enable-shared
+    - make
+    - make install
+
+- name: Add Ruby symlinks
+  file:
+    src: "/usr/local/bin/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    state: link
+    force: yes
+  with_items:
+    - erb
+    - gem
+    - irb
+    - rake
+    - rdoc
+    - ruby

@@ -1,0 +1,11 @@
+---
+# Install Ruby via apt package manager
+
+- name: Install ruby via apt
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ruby-full
+    - ruby-dev
+    - rubygems

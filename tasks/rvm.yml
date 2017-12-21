@@ -1,0 +1,28 @@
+---
+# Install Ruby via Ruby Version Manager (RVM)
+
+- name: Install rvm dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ ruby_rvm_dependencies | list }}"
+
+- name : Import GPG keys
+  shell: gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name : Run RVM installer script
+  shell: curl -sSL https://get.rvm.io | bash -s stable
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name : Install ruby version
+  shell: rvm install {{ ruby_version }}
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name : Set global ruby version
+  shell: rvm use {{ ruby_version }} --default
+  become: true
+  become_user: "{{ ruby_user }}"

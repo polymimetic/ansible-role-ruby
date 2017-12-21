@@ -1,0 +1,64 @@
+---
+# defaults file for ruby
+
+# The location where temporary files will be downloaded in preparation for Ruby installation.
+
+ruby_workspace: /usr/local/src
+
+# The user account under which Ruby gems will be installed.
+# ruby_user: "{{ ansible_env.USER }}"
+
+# Build dependencies for packages (will be installed with apt).
+ruby_dependencies:
+  - git-core
+  - curl
+  - zlib1g-dev
+  - build-essential
+  - libssl-dev
+  - libreadline-dev
+  - libyaml-dev
+  - libsqlite3-dev
+  - sqlite3
+  - libxml2-dev
+  - libxslt1-dev
+  - libcurl4-openssl-dev
+  - python-software-properties
+  - libffi-dev
+
+# Ruby installation type. Can be 'apt', 'ppa', 'rbenv', 'rvm' or 'source'.
+ruby_install_type: rbenv
+
+# Ruby version to install.
+ruby_version: "2.4.2"
+
+# Array of ruby apt packages to install when installing via PPA
+ruby_ppa_packages:
+  - "ruby{{ ruby_version | truncate(3,True,'',0) }}"
+  - "ruby{{ ruby_version | truncate(3,True,'',0) }}-dev"
+  - ruby-switch
+  # - rubygems
+
+# Path to ruby rbenv file.
+ruby_rbenv_profile: "/home/{{ ruby_user }}/.{{ 'zshrc_local' if ansible_user_shell == '/bin/zsh' else 'bashrc' }}"
+
+# Array of RVM dependencies
+ruby_rvm_dependencies:
+  - libgdbm-dev
+  - libncurses5-dev
+  - automake
+  - libtool
+  - bison
+  - libffi-dev
+
+# Whether this role should install Bundler.
+ruby_install_bundler: true
+
+# A list of Ruby gems to install.
+ruby_gems:
+  - name: rails
+    version: 5.1.4
+  - name: sass
+  - name: boom
+  # - name: bundler
+  #   state: present # present/absent/latest, default: present
+  #   version: "~> 1.15.1" # default: N/A

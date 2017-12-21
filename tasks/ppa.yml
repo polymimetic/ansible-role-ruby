@@ -1,0 +1,23 @@
+---
+# Install Ruby via Brightbox PPA
+
+- name: Add ruby PPA repository
+  apt_repository:
+    repo: ppa:brightbox/ruby-ng
+    state: present
+    update_cache: yes
+  register: ruby_repo
+
+- name: Update apt cache if repo was added.
+  apt: update_cache=yes
+  when: ruby_repo.changed
+
+- name: Install ruby software packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ ruby_ppa_packages | list }}"
+
+- name : Set ruby version
+  shell: ruby-switch --set ruby{{ ruby_version | truncate(3,True,'',0) }}
+  become: yes

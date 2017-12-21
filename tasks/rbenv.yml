@@ -1,0 +1,50 @@
+---
+# Install Ruby via Rbenv
+
+- name: Install Rbenv
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: "/home/{{ ruby_user }}/.rbenv"
+    accept_hostkey: true
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name: Install Rbenv PATH
+  lineinfile:
+    dest: "/home/{{ ruby_user }}/{{ ruby_rbenv_profile }}"
+    line: 'export PATH="$HOME/.rbenv/bin:$PATH"'
+
+- name: Initialize Rbenv
+  lineinfile:
+    dest: "/home/{{ ruby_user }}/{{ ruby_rbenv_profile }}"
+    line: 'eval "$(rbenv init -)"'
+
+- name: Creates plugin directory
+  file:
+    path: "/home/{{ ruby_user }}/.rbenv/plugins/"
+    mode: 0755
+    state: directory
+
+- name: Install Ruby Build
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: "/home/{{ ruby_user }}/.rbenv/plugins/ruby-build"
+    accept_hostkey: true
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name: Install Ruby Build PATH
+  lineinfile:
+    dest: "/home/{{ ruby_user }}/{{ ruby_rbenv_profile }}"
+    line: 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"'
+
+- name : Install ruby version
+  shell: "/home/{{ ruby_user }}/.rbenv/bin/rbenv install {{ ruby_version }}"
+  failed_when: false
+  become: true
+  become_user: "{{ ruby_user }}"
+
+- name : Set global ruby version
+  shell: "/home/{{ ruby_user }}/.rbenv/bin/rbenv global {{ ruby_version }}"
+  become: true
+  become_user: "{{ ruby_user }}"
